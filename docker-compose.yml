@@ -1,0 +1,66 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    env_file: .env
+    environment:
+        - POSTGRES_DATABASE
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+        - PGDATA
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      app-net:
+        aliases:
+          - database   
+  todolist:
+    build:
+      context: .
+      dockerfile: ./containers/Dockerfile
+    image: todolist:latest
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/data
+    networks:
+      - app-net  
+    depends_on:
+      - db   
+    env_file: .env  
+    environment:
+        - APP
+        - ENVIRONMENT
+        - LOG_LEVEL
+        - CONTEXT_TIMEOUT
+        - POSTGRES_HOST
+        - POSTGRES_PORT
+        - POSTGRES_DATABASE
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+        - POSTGRES_SSLMODE
+        - HTTP_SERVER_HOST
+        - HTTP_SERVER_PORT
+        - HTTP_SERVER_READ_TIMEOUT
+        - HTTP_SERVER_WRITE_TIMEOUT
+        - HTTP_SERVER_IDLE_TIMEOUT
+  migrate:
+    image: migrate/migrate
+    restart: on-failure
+    depends_on:
+        - db
+    networks:
+        - app-net
+    volumes:
+      - ./migrations:/migrations  
+    env_file: .env     
+    command: ["-path", "/migrations", "-database",  "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}?sslmode=${POSTGRES_SSLMODE}", "up"]
+    links: 
+        - db
+networks:
+  app-net:
+      driver: bridge

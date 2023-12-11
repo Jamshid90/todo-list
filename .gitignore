@@ -1,0 +1,9 @@
+.env
+*.log
+*.DS_Store
+.vscode
+.idea
+.idea/
+__MACOSX/
+bin/
+postgres-data
