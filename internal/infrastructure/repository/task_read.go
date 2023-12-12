@@ -16,7 +16,7 @@ type taskRead struct {
 }
 
 func NewTaskRead(db *postgres.PostgresDB) (*taskRead, error) {
-	if db != nil {
+	if db == nil {
 		return nil, errors.New("db must not be null")
 	}
 	return &taskRead{db}, nil
