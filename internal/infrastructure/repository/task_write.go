@@ -14,8 +14,11 @@ type taskWrite struct {
 	db *postgres.PostgresDB
 }
 
-func NewTaskWrite(db *postgres.PostgresDB) *taskWrite {
-	return &taskWrite{db}
+func NewTaskWrite(db *postgres.PostgresDB) (*taskWrite, error) {
+	if db != nil {
+		return nil, errors.New("db must not be null")
+	}
+	return &taskWrite{db}, nil
 }
 
 func (t *taskWrite) Create(ctx context.Context, task *entity.Task) error {

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -14,8 +15,11 @@ type taskRead struct {
 	db *postgres.PostgresDB
 }
 
-func NewTaskRead(db *postgres.PostgresDB) *taskRead {
-	return &taskRead{db}
+func NewTaskRead(db *postgres.PostgresDB) (*taskRead, error) {
+	if db != nil {
+		return nil, errors.New("db must not be null")
+	}
+	return &taskRead{db}, nil
 }
 
 func (t *taskRead) Task(ctx context.Context, uuid string) (*entity.Task, error) {

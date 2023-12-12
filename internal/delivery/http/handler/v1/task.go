@@ -75,9 +75,6 @@ func (h *taskHandler) Add() http.HandlerFunc {
 			case errors.Is(err, entity.ErrIncorrectTaskPriority):
 				render.Render(w, r, models.NewResponseError(400, "task_priority_incorrect", "Invalid task Priority"))
 				return
-			case errors.Is(err, entity.ErrIncorrectTaskPriority):
-				render.Render(w, r, models.NewResponseError(400, "task_priority_incorrect", "Invalid task Priority"))
-				return
 			case errors.Is(err, entity.ErrEmptyTaskTitle):
 				render.Render(w, r, models.NewResponseError(400, "task_title_empty", "Task title is empty"))
 				return

@@ -54,10 +54,20 @@ func (a *App) Run() error {
 		return fmt.Errorf("error during parse duration for context timeout : %w", err)
 	}
 
-	taskWrite := repository.NewTaskWrite(a.db)
-	taskRead := repository.NewTaskRead(a.db)
+	taskWrite, err := repository.NewTaskWrite(a.db)
+	if err != nil {
+		return fmt.Errorf("error during initialization task write repository: %w", err)
+	}
 
-	taskUseCase := usecase.NewTask(taskWrite, taskRead)
+	taskRead, err := repository.NewTaskRead(a.db)
+	if err != nil {
+		return fmt.Errorf("error during initialization task read repository: %w", err)
+	}
+
+	taskUseCase, err := usecase.NewTask(taskWrite, taskRead)
+	if err != nil {
+		return fmt.Errorf("error during initialization task usecase: %w", err)
+	}
 
 	// initialize api handler
 	apiHandler := deliveryHttp.NewRoute(a.config, a.logger, contextTimeout, taskUseCase)

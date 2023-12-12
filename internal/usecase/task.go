@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Jamshid90/todo-list/internal/entity"
 )
@@ -26,11 +27,17 @@ type task struct {
 	read  TaskRead
 }
 
-func NewTask(write TaskWrite, read TaskRead) *task {
+func NewTask(write TaskWrite, read TaskRead) (*task, error) {
+	if write == nil {
+		return nil, errors.New("task writer must not be null")
+	}
+	if read == nil {
+		return nil, errors.New("task writer must not be null")
+	}
 	return &task{
 		write: write,
 		read:  read,
-	}
+	}, nil
 }
 
 func (t *task) Add(ctx context.Context, task *entity.Task) error {
